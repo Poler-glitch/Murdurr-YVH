@@ -1,0 +1,213 @@
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+-- Wait for library/icons to initialize
+task.wait(0.2)
+
+local Window = WindUI:CreateWindow({
+    Title = "Alternate | MurDurr & YVH",
+    Icon = "sparkles",
+    Author = "Fin & Ani",
+    Folder = "MySuperHub",
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Dark",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = true,
+    ScrollBarEnabled = false,
+    
+    User = {
+        Enabled = true,
+        Anonymous = false, 
+        Callback = function()
+            print("clicked")
+        end,
+    },
+    
+    KeySystem = { 
+        Key = { "ALT-9921-UXZ-99", "DH72-PL09-QW12" }, 
+        Note = "Enter the high-security access key. Case sensitive.",
+        URL = "HTTPS://YOUR-KEY-LINK-HERE.COM",
+        SaveKey = true,
+    },
+})
+
+-- [[ TAGS ]]
+
+Window:Tag({
+    Title = "Ver1.1",
+    Icon = "shield-check",
+    Color = Color3.fromHex("#30ff6a"),
+    Radius = 8, 
+})
+
+Window:Tag({
+    Title = "Beta",
+    Icon = "flask-conical",
+    Color = Color3.fromRGB(255, 215, 0), -- Yellow/Gold
+    Radius = 8, 
+})
+
+-- [[ ESP LOGIC ]]
+
+local espEnabled = false
+local Players = game:GetService("Players")
+
+local function applyESP(character)
+    if not character:FindFirstChild("ESPHighlight") then
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "ESPHighlight"
+        highlight.Parent = character
+        highlight.FillColor = Color3.fromRGB(255, 0, 0)
+        highlight.FillTransparency = 0.5
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.Enabled = espEnabled
+    end
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= Players.LocalPlayer then
+        player.CharacterAdded:Connect(applyESP)
+        if player.Character then applyESP(player.Character) end
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(applyESP)
+end)
+
+-- [[ SECTIONS & TABS ]]
+
+local Section1 = Window:Section({
+    Title = "Murdurr",
+    Icon = "bird",
+    Opened = true,
+})
+
+local Tab = Section1:Tab({
+    Title = "Main",
+    Icon = "layout-grid"
+})
+
+local ExtraTab = Section1:Tab({
+    Title = "Extra",
+    Icon = "component"
+})
+
+local PremiumTab = Section1:Tab({
+    Title = "Premium Access",
+    Icon = "crown"
+})
+
+Window:Divider()
+
+local Section2 = Window:Section({
+    Title = "YVH",
+    Icon = "zap",
+    Opened = true,
+})
+
+local YVHMainTab = Section2:Tab({
+    Title = "Main",
+    Icon = "terminal"
+})
+
+Window:Divider()
+
+local Section3 = Window:Section({
+    Title = "Settings",
+    Icon = "settings",
+    Opened = false,
+})
+
+local SettingsTab = Section3:Tab({
+    Title = "Character",
+    Icon = "user"
+})
+
+-- [[ MURDURR MAIN TAB ELEMENTS ]]
+
+Tab:Button({
+    Title = "Hardest Obby Complete",
+    Desc = "Teleports You to the Hardest obby finish on Murdurr 75+!",
+    Icon = "trophy",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        if character then
+            local targetCFrame = CFrame.new(135, 94.4997559, -67.0000076, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            character:PivotTo(targetCFrame)
+            Window:Notify({Title = "Teleport Success", Content = "Arrived at destination!", Duration = 3, Icon = "map-pin"})
+        end
+    end
+})
+
+Tab:Button({
+    Title = "Fake Adrenaline",
+    Desc = "Recommended if you are using adrenaline ability to trick Durr!",
+    Icon = "zap",
+    Callback = function()
+        local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            task.spawn(function()
+                -- PHASE 1: The Boost (5 Seconds)
+                local start = tick()
+                while tick() - start < 5 do
+                    hum.WalkSpeed = 24
+                    task.wait() 
+                end
+                -- PHASE 2: The Reset (2 Seconds)
+                local reset = tick()
+                while tick() - reset < 2 do
+                    hum.WalkSpeed = 16
+                    task.wait()
+                end
+                print("Speed successfully reset to 16")
+            end)
+        end
+    end
+})
+
+Tab:Divider()
+
+Tab:Toggle({
+    Title = "ESP Players",
+    Desc = "Enhances visual awareness by highlighting player silhouettes through geometry.",
+    Icon = "eye",
+    Value = false,
+    Callback = function(state)
+        espEnabled = state
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player.Character then
+                local hl = player.Character:FindFirstChild("ESPHighlight")
+                if hl then hl.Enabled = state end
+            end
+        end
+    end
+})
+
+-- [[ CHARACTER TAB ELEMENTS ]]
+
+SettingsTab:Button({
+    Title = "Respawn",
+    Desc = "Resets your character instantly",
+    Icon = "refresh-cw",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Health = 0
+        end
+    end
+})
+
+Window:Notify({
+    Title = "Alternate Loaded",
+    Content = "Welcome back!",
+    Duration = 3,
+    Icon = "shield-check",
+})
